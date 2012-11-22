@@ -8,7 +8,8 @@ See http://toscawidgets.org/documentation/WidgetBrowser for more information
 
 import widgets
 
-class DemoCodemirror(widgets.Codemirror):
+
+class DemoCodeMirrorWidget(widgets.CodeMirrorWidget):
     # Provide default parameters, value, etc... here
     # default = <some-default-value>
-    pass
+    mode = 'python'
