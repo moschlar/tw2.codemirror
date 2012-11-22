@@ -3,10 +3,12 @@ from setuptools import setup, find_packages
 setup(
     name='tw2.codemirror',
     version='0.1',
-    description='',
+    description='ToscaWidgets2 widget for CodeMirror, a JavaScript-based source code editor',
+    long_description=open('README.rst').read(),
     author='Moritz Schlarb',
     author_email='mail@moritz-schlarb.de',
     url='https://github.com/moschlar/tw2.codemirror',
+    license='WTFPL-2',
     install_requires=[
         "tw2.core",
         "tw2.forms",

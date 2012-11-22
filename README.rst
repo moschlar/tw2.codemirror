@@ -13,4 +13,4 @@ See also their repository at https://github.com/marijnh/CodeMirror
 
 This package comes bundled with CodeMirror Version 2.36, which is released
 under a MIT-style license.
-This package itself is licensed under the WTFPL, Version 2.
+This package itself is licensed under the WTFPL, Version 2 (for the moment).
