@@ -21,6 +21,10 @@ _codemirror_css = twc.CSSSource(src=u'''
 .CodeMirror {
     border: 1px solid black;
     background: #FFFFFF;
+    width: 600px;
+}
+.CodeMirror-scroll {
+    height: 200px;
 }
 ''')
 
@@ -40,7 +44,7 @@ class CodeMirrorWidget(twf.TextArea):
 
     # declare static resources here
     # you can remove either or both of these, if not needed
-    resources = [_codemirror_css, codemirror_css, codemirror_js]
+    resources = [codemirror_js, codemirror_css, _codemirror_css]
 
     mode = twc.Param('The highlighting mode for CodeMirror', default=None)
     theme = twc.Param('The theme for CodeMirror', default=None)
