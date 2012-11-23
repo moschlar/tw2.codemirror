@@ -13,3 +13,8 @@ class DemoCodeMirrorWidget(widgets.CodeMirrorWidget):
     # Provide default parameters, value, etc... here
     # default = <some-default-value>
     mode = 'python'
+    value = u'''
+def hello():
+    print u'Hello World!'
+    return True
+'''

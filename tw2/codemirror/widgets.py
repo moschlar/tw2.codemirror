@@ -17,6 +17,12 @@ codemirror_css = twc.CSSLink(
     modname=__name__,
     filename='static/lib/codemirror.css',
     )
+_codemirror_css = twc.CSSSource(src=u'''
+.CodeMirror {
+    border: 1px solid black;
+    background: #FFFFFF;
+}
+''')
 
 codemirror_keymaps = dict(
     (f.rstrip('.js'), twc.JSLink(modname=__name__, filename=os.path.join('static/keymap', f)))
@@ -30,13 +36,15 @@ codemirror_themes = dict(
 
 
 class CodeMirrorWidget(twf.TextArea):
-    template = "tw2.codemirror.templates.codemirror"
+#    template = "tw2.codemirror.templates.codemirror"
 
     # declare static resources here
     # you can remove either or both of these, if not needed
-    resources = [codemirror_js, codemirror_css]
+    resources = [_codemirror_css, codemirror_css, codemirror_js]
 
     mode = twc.Param('The highlighting mode for CodeMirror', default=None)
+    theme = twc.Param('The theme for CodeMirror', default=None)
+    lineNumbers = twc.Param(default=True)
 
     @classmethod
     def post_define(cls):
@@ -48,4 +56,9 @@ class CodeMirrorWidget(twf.TextArea):
         # put code here to run just before the widget is displayed
         if self.mode:
             self.resources.append(codemirror_modes[self.mode])
-        self.add_call(codemirror_js.fromTextArea(twc.js_function('document.getElementById')(self.compound_id)))
+        if self.theme:
+            self.resources.append(codemirror_themes[self.theme])
+        self.add_call(
+            codemirror_js.fromTextArea(twc.js_function('document.getElementById')(self.compound_id), {
+                'lineNumbers': self.lineNumbers,
+                }))
