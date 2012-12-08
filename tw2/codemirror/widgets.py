@@ -39,6 +39,30 @@ codemirror_themes = dict(
     for f in os.listdir(os.path.join(os.path.dirname(__file__), 'static/theme')))
 
 
+def mode_name(mode):
+    '''Tries best-effortly to get the right mode name'''
+
+    if mode:
+        l = mode.lower()
+
+        if l in ('java', ):
+            return ('clike', 'text/x-java')
+        if l in ('c', ):
+            return ('clike', 'text/x-csrc')
+        if l in ('c++', 'cxx'):
+            return ('clike', 'text/x-c++src')
+        if l in ('csharp', 'c#'):
+            return ('clike', 'text/x-csharp')
+
+        if l in ('sh', 'bash', ):
+            return ('shell', 'text/x-sh')
+
+        if l in codemirror_modes:
+            return (l, None)
+
+    return (None, None)
+
+
 class CodeMirrorWidget(twf.TextArea):
 #    template = "tw2.codemirror.templates.codemirror"
 
@@ -48,7 +72,14 @@ class CodeMirrorWidget(twf.TextArea):
 
     mode = twc.Param('The highlighting mode for CodeMirror', default=None)
     theme = twc.Param('The theme for CodeMirror', default=None)
-    lineNumbers = twc.Param(default=True)
+    options = twc.Param('CodeMirror configuration options, '
+        + 'see http://codemirror.net/doc/manual.html#config for description',
+        default={})
+    default_options = {
+        'theme': 'default',
+        'indentUnit': 4,
+        'lineNumbers': True,
+        }
 
     @classmethod
     def post_define(cls):
@@ -58,11 +89,22 @@ class CodeMirrorWidget(twf.TextArea):
     def prepare(self):
         super(CodeMirrorWidget, self).prepare()
         # put code here to run just before the widget is displayed
-        if self.mode:
-            self.resources.append(codemirror_modes[self.mode])
-        if self.theme:
+        self.safe_modify('resources')
+        options = self.default_options.copy()
+        if self.options:
+            options.update(self.options)
+
+        try:
+            (mode, mime) = mode_name(self.mode)
+            self.resources.append(codemirror_modes[mode])
+            options['mode'] = mime or mode
+        except KeyError:
+            pass
+
+        try:
             self.resources.append(codemirror_themes[self.theme])
-        self.add_call(
-            codemirror_js.fromTextArea(twc.js_function('document.getElementById')(self.compound_id), {
-                'lineNumbers': self.lineNumbers,
-                }))
+            options['theme'] = self.theme
+        except KeyError:
+            pass
+
+        self.add_call(codemirror_js.fromTextArea(twc.js_function('document.getElementById')(self.compound_id), options))
