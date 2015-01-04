@@ -143,7 +143,7 @@ class CodeMirrorWidget(twf.TextArea):
             except KeyError:
                 pass
 
-        if self.height_from_rows:
+        if self.height_from_rows and self.rows is not None:
             _css = twc.CSSSource(src=u'#%s + .CodeMirror {height: %dem;}' % (self.compound_id, self.rows))
             self.resources.append(_css)
 
