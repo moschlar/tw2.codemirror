@@ -9,7 +9,18 @@ See http://toscawidgets.org/documentation/WidgetBrowser for more information
 import widgets
 
 
-class DemoCodeMirrorWidget(widgets.CodeMirrorWidget):
+class DemoCodeMirrorEditor(widgets.CodeMirrorEditor):
+    # Provide default parameters, value, etc... here
+    # default = <some-default-value>
+    mode = 'python'
+    fullscreen = True
+    value = u'''
+def hello():
+    print u'Hello World!'
+    return True
+'''
+
+class DemoCodeMirrorDisplay(widgets.CodeMirrorDisplay):
     # Provide default parameters, value, etc... here
     # default = <some-default-value>
     mode = 'python'

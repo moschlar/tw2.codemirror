@@ -1,16 +1,16 @@
 import os
 import tw2.core as twc
 import tw2.forms as twf
-from markupsafe import Markup
+from markupsafe import Markup, escape_silent
 
 
-__all__ = ['CodeMirrorWidget']
+__all__ = ['CodeMirrorEditor', 'CodeMirrorDisplay']
 
 
 codemirror_js = twc.JSLink(
     modname=__name__,
     filename='static/lib/codemirror.js',
-    fromTextArea=twc.js_function('CodeMirror.fromTextArea')
+    fromTextArea=twc.js_function('CodeMirror.fromTextArea'),
 )
 codemirror_css = twc.CSSLink(
     modname=__name__,
@@ -81,20 +81,22 @@ def mode_name(mode):
     return (None, None)
 
 
-class CodeMirrorWidget(twf.TextArea):
-#    template = "tw2.codemirror.templates.codemirror"
-
+class CodeMirrorEditor(twf.TextArea):
     # declare static resources here
     resources = [codemirror_js, codemirror_css, _codemirror_css]
 
     mode = twc.Param('The highlighting mode for CodeMirror', default=None)
     keymap = twc.Param('The keymap for CodeMirror', default=None)
     theme = twc.Param('The theme for CodeMirror', default=None)
+
     fullscreen = twc.Param('Whether to include the fullscreen editing addon', default=False)
     height_from_rows = twc.Param('Whether to set the CodeMirror height from the rows', default=True)
-    options = twc.Param('CodeMirror configuration options, '
+
+    firstLineNumber = twc.Param(default=None)
+
+    options = twc.Param('Additional CodeMirror configuration options, '
             'see http://codemirror.net/doc/manual.html#config for more info',
-        default={})
+        default=None)
     default_options = {
         # 'theme': 'default',
         # 'keymap': 'default',
@@ -110,17 +112,13 @@ class CodeMirrorWidget(twf.TextArea):
     #     # put custom initialisation code here
 
     def prepare(self):
-        super(CodeMirrorWidget, self).prepare()
         # put code here to run just before the widget is displayed
+        super(CodeMirrorEditor, self).prepare()
         self.safe_modify('resources')
 
         options = self.default_options.copy()
         if self.options:
             options.update(self.options)
-
-        if self.placeholder:
-            #options['placeholder'] = self.placeholder
-            self.resources.append(codemirror_addons['display']['placeholder'])
 
         try:
             (mode, mime) = mode_name(self.mode)
@@ -143,6 +141,9 @@ class CodeMirrorWidget(twf.TextArea):
             except KeyError:
                 pass
 
+        if self.firstLineNumber:
+            options['firstLineNumber'] = self.firstLineNumber
+
         if self.height_from_rows and self.rows is not None:
             _css = twc.CSSSource(src=u'#%s + .CodeMirror {height: %dem;}' % (self.compound_id, self.rows))
             self.resources.append(_css)
@@ -150,13 +151,39 @@ class CodeMirrorWidget(twf.TextArea):
         if self.fullscreen:
             self.resources.append(codemirror_addons['display']['fullscreen'])
             #TODO: Customizable keys
-            options['extraKeys'] = {
+            self.default_options['extraKeys'] = {
                 "F11": twc.js_callback('function(cm) {cm.setOption("fullScreen", !cm.getOption("fullScreen"));}'),
                 "Esc": twc.js_callback('function(cm) {if (cm.getOption("fullScreen")) cm.setOption("fullScreen", false);}'),
             }
-            _help_text = self.help_text
+            try:
+                _help_text = self.help_text
+            except AttributeError:
+                _help_text = u''
+            self.safe_modify('help_text')
             self.help_text = 'Press F11 when cursor is in the editor to toggle full screen editing. ' \
                              'Esc can also be used to exit full screen editing.' \
                              + Markup('<br />') + (_help_text if _help_text else '')
 
-        self.add_call(codemirror_js.fromTextArea(twc.js_function('document.getElementById')(self.compound_id), options))
+        if self.placeholder:
+            self.resources.append(codemirror_addons['display']['placeholder'])
+
+        self.add_call(codemirror_js.fromTextArea(twc.js_function('document.getElementById')(self.compound_id),
+                                                 options))
+
+
+class CodeMirrorDisplay(CodeMirrorEditor):
+
+    css_class = 'CodeMirrorDisplay'
+    rows = None
+
+    @classmethod
+    def post_define(cls):
+        cls.rows = None
+        cls.default_options = cls.default_options.copy()
+        cls.default_options.update({'readOnly': 'nocursor', 'viewportMargin': twc.js_symbol('Infinity')})
+
+    def prepare(self):
+        # put code here to run just before the widget is displayed
+        self.safe_modify('rows')
+        self.rows = None
+        super(CodeMirrorDisplay, self).prepare()
