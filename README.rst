@@ -7,10 +7,10 @@ which provides a JavaScript-based source code editor using the
 
 .. _CodeMirror: http://codemirror.net/
 
-This library is merely a convenience for using CodeMirror through tw2,
-all major credit goes to the developers of CodeMirror.
-See also their repository at https://github.com/marijnh/CodeMirror
+This library is merely a convenience for using CodeMirror through
+ToscaWidgets 2, all major credit goes to the developers of CodeMirror.
+See also their repository at https://github.com/codemirror/CodeMirror/
 
-This package comes bundled with CodeMirror Version 2.36, which is released
+This package comes bundled with CodeMirror Version 4.10, which is released
 under a MIT-style license.
 This package itself is licensed under the WTFPL, Version 2 (for the moment).
