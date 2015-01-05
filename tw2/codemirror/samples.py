@@ -24,6 +24,7 @@ class DemoCodeMirrorDisplay(widgets.CodeMirrorDisplay):
     # Provide default parameters, value, etc... here
     # default = <some-default-value>
     mode = 'python'
+    lineNumbers = False
     value = u'''
 def hello():
     print u'Hello World!'
