@@ -92,6 +92,7 @@ class CodeMirrorEditor(twf.TextArea):
     fullscreen = twc.Param('Whether to include the fullscreen editing addon', default=False)
     height_from_rows = twc.Param('Whether to set the CodeMirror height from the rows', default=True)
 
+    lineNumbers = twc.Param(default=True)
     firstLineNumber = twc.Param(default=None)
 
     options = twc.Param('Additional CodeMirror configuration options, '
@@ -102,7 +103,6 @@ class CodeMirrorEditor(twf.TextArea):
         # 'keymap': 'default',
         'indentUnit': 4,
         'lineWrapping': True,
-        'lineNumbers': True,
         'autofocus': False,
     }
 
@@ -141,6 +141,8 @@ class CodeMirrorEditor(twf.TextArea):
             except KeyError:
                 pass
 
+        options['lineNumbers'] = bool(self.lineNumbers)
+
         if self.firstLineNumber:
             options['firstLineNumber'] = self.firstLineNumber
 
@@ -172,18 +174,15 @@ class CodeMirrorEditor(twf.TextArea):
 
 
 class CodeMirrorDisplay(CodeMirrorEditor):
+    '''A CodeMirror widget for displaying and highlighting a snippet of code
+
+    This instance will be read-only, of course.
+    To achieve dynamic sizing in height, rows should not be set.
+    '''
 
     css_class = 'CodeMirrorDisplay'
-    rows = None
 
     @classmethod
     def post_define(cls):
-        cls.rows = None
         cls.default_options = cls.default_options.copy()
         cls.default_options.update({'readOnly': 'nocursor', 'viewportMargin': twc.js_symbol('Infinity')})
-
-    def prepare(self):
-        # put code here to run just before the widget is displayed
-        self.safe_modify('rows')
-        self.rows = None
-        super(CodeMirrorDisplay, self).prepare()
