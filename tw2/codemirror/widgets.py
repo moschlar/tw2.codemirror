@@ -22,11 +22,11 @@ _codemirror_css = twc.CSSLink(
     filename='static/style.css',
 )
 
-codemirror_util_dir = twc.DirLink(
-    modname=__name__,
-    whole_dir=True,
-    filename='static/lib/util/',
-)
+# codemirror_util_dir = twc.DirLink(
+#     modname=__name__,
+#     whole_dir=True,
+#     filename='static/lib/util/',
+# )
 
 #TODO: Make addons programmatically usable
 # codemirror_addons = dict(
@@ -36,24 +36,30 @@ codemirror_util_dir = twc.DirLink(
 codemirror_addons = {
     'display': {
         'placeholder': twc.JSLink(modname=__name__,
-            filename='static/addon/display/placeholder.js'
+            filename='static/addon/display/placeholder.js',
+            resources=[codemirror_js],
         ),
         'fullscreen': twc.JSLink(modname=__name__, filename='static/addon/display/fullscreen.js',
-            resources=[twc.CSSLink(modname=__name__, filename='static/addon/display/fullscreen.css')]
+            resources=[twc.CSSLink(modname=__name__, filename='static/addon/display/fullscreen.css'), codemirror_js],
+        ),
+    },
+    'mode': {
+        'meta': twc.JSLink(modname=__name__, filename='static/mode/meta.js',
+            resources=[codemirror_js],
         ),
     },
 }
 
 codemirror_keymaps = dict(
-    (f.rstrip('.js'), twc.JSLink(modname=__name__, filename=os.path.join('static/keymap', f)))
+    (f.rstrip('.js'), twc.JSLink(modname=__name__, filename=os.path.join('static/keymap', f), resources=[codemirror_js]))
         for f in os.listdir(os.path.join(os.path.dirname(__file__), 'static/keymap')))
 
 codemirror_modes = dict(
-    (d, twc.JSLink(modname=__name__, filename=os.path.join('static/mode', d, d + '.js')))
+    (d, twc.JSLink(modname=__name__, filename=os.path.join('static/mode', d, d + '.js'), resources=[codemirror_js]))
         for d in os.listdir(os.path.join(os.path.dirname(__file__), 'static/mode')))
 
 codemirror_themes = dict(
-    (f.rstrip('.css'), twc.CSSLink(modname=__name__, filename=os.path.join('static/theme', f)))
+    (f.rstrip('.css'), twc.CSSLink(modname=__name__, filename=os.path.join('static/theme', f), resources=[codemirror_js]))
         for f in os.listdir(os.path.join(os.path.dirname(__file__), 'static/theme')))
 
 
@@ -185,4 +191,4 @@ class CodeMirrorDisplay(CodeMirrorEditor):
     @classmethod
     def post_define(cls):
         cls.default_options = cls.default_options.copy()
-        cls.default_options.update({'readOnly': 'nocursor', 'viewportMargin': twc.js_symbol('Infinity')})
+        cls.default_options.update({'readOnly': True, 'viewportMargin': twc.js_symbol('Infinity')})

@@ -1,3 +1,5 @@
 .CodeMirror { border: 1px solid silver; }
-.CodeMirrorDisplay + .CodeMirror { height: auto; }
 .CodeMirror pre.CodeMirror-placeholder { color: #999; }
+
+.CodeMirrorDisplay + .CodeMirror { height: auto; }
+.CodeMirrorDisplay + .CodeMirror .CodeMirror-cursor { display: none !important; }
