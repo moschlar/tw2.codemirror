@@ -191,4 +191,4 @@ class CodeMirrorDisplay(CodeMirrorEditor):
     @classmethod
     def post_define(cls):
         cls.default_options = cls.default_options.copy()
-        cls.default_options.update({'readOnly': True, 'viewportMargin': twc.js_symbol('Infinity')})
+        cls.default_options.update({'readOnly': 'nocursor', 'viewportMargin': twc.js_symbol('Infinity')})

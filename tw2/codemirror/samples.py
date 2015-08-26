@@ -14,18 +14,19 @@ class DemoCodeMirrorEditor(widgets.CodeMirrorEditor):
     # default = <some-default-value>
     mode = 'python'
     fullscreen = True
-    value = u'''
+    value = u'''\
 def hello():
     print u'Hello World!'
     return True
 '''
+
 
 class DemoCodeMirrorDisplay(widgets.CodeMirrorDisplay):
     # Provide default parameters, value, etc... here
     # default = <some-default-value>
     mode = 'python'
     lineNumbers = False
-    value = u'''
+    value = u'''\
 def hello():
     print u'Hello World!'
     return True
