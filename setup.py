@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='tw2.codemirror',
-    version='0.2.2',
+    version='0.2.3',
     description='ToscaWidgets2 widget for CodeMirror, a JavaScript-based source code editor',
     long_description=open('README.rst').read(),
     author='Moritz Schlarb',
